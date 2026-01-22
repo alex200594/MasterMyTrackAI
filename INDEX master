@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MasterMyTrack.ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background: #f4f4f9;
+    color: #111;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  header h1 { margin: 0; font-weight: 600; color: #0d6efd;}
+  nav a {
+    margin-left: 1rem;
+    text-decoration: none;
+    color: #111;
+    font-weight: 500;
+  }
+  .hero {
+    text-align: center;
+    padding: 6rem 2rem 3rem;
+    background: linear-gradient(135deg, #0d6efd20, #f4f4f920);
+  }
+  .hero h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+  .hero p { font-size: 1.1rem; margin-bottom: 2rem; color: #555; }
+  .btn {
+    padding: 0.8rem 2rem;
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #0b5ed7; }
+  .upload-section {
+    text-align: center;
+    margin: 3rem 2rem;
+  }
+  input[type=file] {
+    display: none;
+  }
+  label.upload-btn {
+    padding: 1rem 2rem;
+    background: #6c757d;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 600;
+  }
+  label.upload-btn:hover { background: #5a6268; }
+  #file-name { margin-top: 1rem; font-weight: 500; }
+  .preview-section {
+    margin-top: 2rem;
+  }
+  .download-btn {
+    display: none;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MasterMyTrack.ai</h1>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">How it Works</a>
+    <a href="#">Pricing</a>
+    <a href="#">FAQ</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Master your music instantly with AI</h2>
+  <p>Upload your track, choose a mastering style, and download your masterpiece.</p>
+  <button class="btn" onclick="document.getElementById('track-upload').click()">Upload Your Track</button>
+</section>
+
+<section class="upload-section">
+  <input type="file" id="track-upload" accept=".wav,.mp3,.flac,.aiff" />
+  <label for="track-upload" class="upload-btn">Choose Track</label>
+  <div id="file-name"></div>
+
+  <div class="preview-section">
+    <audio id="audio-preview" controls></audio>
+    <div>
+      <button class="btn download-btn" id="download-btn">Download Mastered Track ($4 Premium)</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const uploadInput = document.getElementById('track-upload');
+const fileNameDisplay = document.getElementById('file-name');
+const audioPreview = document.getElementById('audio-preview');
+const downloadBtn = document.getElementById('download-btn');
+
+uploadInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  fileNameDisplay.textContent = file.name;
+
+  const audioURL = URL.createObjectURL(file);
+  audioPreview.src = audioURL;
+
+  // Simulate processing
+  fileNameDisplay.textContent += ' — Mastering...';
+  await new Promise(r => setTimeout(r, 2000));
+  fileNameDisplay.textContent = file.name + ' — Mastered (Preview Ready)';
+
+  // Enable premium download
+  downloadBtn.style.display = 'inline-block';
+});
+
+// Stripe Checkout for Premium Mastering ($4)
+const stripe = Stripe('pk_test_12345YOURPUBLICKEY'); // Replace with your Stripe public key
+downloadBtn.addEventListener('click', async () => {
+  downloadBtn.disabled = true;
+  downloadBtn.textContent = 'Processing Payment...';
+
+  // Create session server-side (simulate here)
+  const session = await fetch('/create-stripe-session', {method: 'POST'}).then(r=>r.json());
+  stripe.redirectToCheckout({ sessionId: session.id });
+});
+</script>
+
+</body>
+</html>
