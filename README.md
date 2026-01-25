@@ -16,7 +16,7 @@ End-to-end AI mastering SaaS with React + Vite, Node/Express, Prisma/PostgreSQL,
 - **DB**: PostgreSQL via Prisma
 - **Audio**: FFmpeg/FFprobe
 
-## Setup
+## Local setup
 
 ### 1. Install dependencies
 
@@ -94,6 +94,18 @@ npm run dev
 
 Frontend: http://localhost:5173
 Backend: http://localhost:4000
+
+## Production deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for managed hosting and Docker instructions.
+
+## Pre-deploy checklist
+
+- [ ] Set all environment variables from `.env.example` for frontend and backend.
+- [ ] Run `npm run db:migrate:deploy` and `npm run db:seed` on the backend.
+- [ ] Confirm `FRONTEND_ORIGINS` includes the production frontend URL.
+- [ ] Configure Stripe webhook to `/api/billing/webhook`.
+- [ ] Ensure persistent storage is mounted for `uploads/`.
 
 ## Stripe Setup
 

@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
+import helmet from 'helmet';
+import morgan from 'morgan';
 import path from 'path';
 import fs from 'fs/promises';
 import { env } from './config/env.js';
@@ -13,7 +16,16 @@ import { apiLimiter } from './middleware/rateLimit.js';
 
 export const app = express();
 
-app.use(cors({ origin: env.frontendUrl, credentials: true }));
+app.set('trust proxy', 1);
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined'));
+app.use(
+  cors({
+    origin: env.frontendOrigins,
+    credentials: true
+  })
+);
 
 app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), webhook);
 
